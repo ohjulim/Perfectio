@@ -12,8 +12,8 @@ class TimerlistItem {
 	//	var name = ""
 	var time = 1000
 	//	var checked = false
-	var active = false
+	var isActive = false
 	func toggleActive() {
-		active = !active
+		isActive = !isActive
 	}
 }

@@ -10,6 +10,7 @@ import UIKit
 
 class TimerlistViewController: UITableViewController {
 	
+	var timer: Timer?
 	var latestIndex: Int = 0
 	var beforeIndex: Int = 0
 	
@@ -20,17 +21,17 @@ class TimerlistViewController: UITableViewController {
 		
 		let row0item = TimerlistItem()
 		row0item.time = 50
-		row0item.active = false
+		row0item.isActive = false
 		items.append(row0item)
 		
 		let row1item = TimerlistItem()
 		row1item.time = 500
-		row0item.active = false
+		row0item.isActive = false
 		items.append(row1item)
 		
 		let row2item = TimerlistItem()
 		row2item.time = 5000
-		row0item.active = false
+		row0item.isActive = false
 		items.append(row2item)
 		
 		super.init(coder: aDecoder)
@@ -63,8 +64,8 @@ class TimerlistViewController: UITableViewController {
 		latestIndexToBefore()
 		if let cell = tableView.cellForRow(at: indexPath) {
 			let item = items[beforeIndex]
-			item.time += 1
-			item.active = false
+			timer?.invalidate() // 이전에 선택했던 셀의 타이머를 정지.
+			item.isActive = false
 			configureActive(for: cell, with: item)
 			configureTime(for: cell, with: item)
 		}
@@ -74,9 +75,16 @@ class TimerlistViewController: UITableViewController {
 		if let cell = tableView.cellForRow(at: indexPath) {
 			let item = items[indexPath.row]
 			latestIndex = indexPath.row
-			item.time -= 1
+			if item.isActive { // isActive 값에 따라 타이머를 실행하거나 정지.
+				timer?.invalidate()
+			} else {
+				timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+					item.time -= 1
+					self.configureTime(for: cell, with: item)
+					print(item.time)
+				}
+			}
 			item.toggleActive()
-			item.active = true
 			configureActive(for: cell, with: item)
 			configureTime(for: cell, with: item)
 		}
@@ -88,7 +96,7 @@ class TimerlistViewController: UITableViewController {
 	}
 	
 	func configureActive(for cell: UITableViewCell, with item: TimerlistItem) {
-		if item.active {
+		if item.isActive {
 			cell.accessoryType = .checkmark
 		} else {
 			cell.accessoryType = .none
