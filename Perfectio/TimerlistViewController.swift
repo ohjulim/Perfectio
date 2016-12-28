@@ -20,17 +20,17 @@ class TimerlistViewController: UITableViewController {
 		items = [TimerlistItem]()
 		
 		let row0item = TimerlistItem()
-		row0item.time = 50
+		row0item.time = 2
 		row0item.isActive = false
 		items.append(row0item)
 		
 		let row1item = TimerlistItem()
-		row1item.time = 500
+		row1item.time = 3
 		row0item.isActive = false
 		items.append(row1item)
 		
 		let row2item = TimerlistItem()
-		row2item.time = 5000
+		row2item.time = 1
 		row0item.isActive = false
 		items.append(row2item)
 		
@@ -93,6 +93,7 @@ class TimerlistViewController: UITableViewController {
 	func configureTime(for cell: UITableViewCell, with item: TimerlistItem) {
 		let label = cell.viewWithTag(1000) as! UILabel
 		label.text = String(item.time)
+		markAsFinished(for: label, with: item)
 	}
 	
 	func configureActive(for cell: UITableViewCell, with item: TimerlistItem) {
@@ -107,6 +108,13 @@ class TimerlistViewController: UITableViewController {
 		beforeIndex = latestIndex
 	}
 	
+	func markAsFinished(for label: UILabel, with item: TimerlistItem) {
+		if item.time == 0 {
+			item.isActive = false
+			label.text = "Done"
+			timer?.invalidate()
+		}
+	}
 	
 	
 	
